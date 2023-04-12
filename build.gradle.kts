@@ -31,3 +31,28 @@ tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+
+publishing {
+    publications {
+        create<MavenPublication>("thisLibrary") {
+            groupId = "com.riege"
+            artifactId = "one-record-jsonutils"
+            from(components["java"])
+            pom {
+                name.set("ONE Record JSON Utils Java Library")
+                description.set("Riege Software ONE Record JSON Utils Java Library")
+                url.set(System.getenv("PROJECT_URL"))
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "remote"
+            url = uri(System.getenv("MAVEN_PUBLISH_URL") ?: "")
+            credentials {
+                username = System.getenv("MAVEN_PUBLISH_USERNAME")
+                password = System.getenv("MAVEN_PUBLISH_PASSWORD")
+            }
+        }
+    }
+}
