@@ -1,6 +1,7 @@
 plugins {
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
+    id("maven-publish")
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
