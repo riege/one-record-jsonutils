@@ -26,6 +26,7 @@ if (version == "unspecified") {
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 java.targetCompatibility = JavaVersion.VERSION_1_8
+java.withSourcesJar()
 
 repositories {
     // Use Maven Central for resolving dependencies.
