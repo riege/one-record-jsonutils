@@ -13,8 +13,8 @@ import com.fasterxml.jackson.databind.util.NameTransformer;
  */
 final class ONERecordBeanSerializerModifier extends BeanSerializerModifier {
 
-    private static final String TYPES_ONTOLOGY = "types";
-    private static final String TYPES_JSON = "@type";
+    static final String TYPES_ONTOLOGY = "types";
+    static final String TYPES_JSON = "@type";
 
     private static NameTransformer PROPERTY_TYPES_TRANSFORMER = new NameTransformer() {
 

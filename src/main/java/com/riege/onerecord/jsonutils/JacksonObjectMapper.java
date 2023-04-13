@@ -7,11 +7,10 @@ import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.BeanSerializerFactory;
-import com.fasterxml.jackson.databind.ser.SerializerFactory;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class JacksonObjectMapper {
@@ -58,9 +57,10 @@ public class JacksonObjectMapper {
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
 
         // Note: We map "types" to "@type" here:
-        SerializerFactory serializerFactory = BeanSerializerFactory.instance
-            .withSerializerModifier(new ONERecordBeanSerializerModifier());
-        mapper.setSerializerFactory(serializerFactory);
+        SimpleModule module = new SimpleModule("ONERecordSerialization", Version.unknownVersion());
+        module.setSerializerModifier(new ONERecordBeanSerializerModifier());
+        module.setDeserializerModifier(new ONERecordBeanDeserializerModifier());
+        mapper.registerModule(module);
 
         mapper.registerModule(new JavaTimeModule());
         return mapper;
