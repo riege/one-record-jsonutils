@@ -11,10 +11,14 @@ import java.util.HashSet;
 
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class JacksonObjectMapperTest {
 
@@ -64,6 +68,34 @@ class JacksonObjectMapperTest {
         expected = expected.replace("+02:00", "");
         assertEquals(expected, json);
 
+    }
+
+    @Test void readLogisticObject() throws IOException, ClassNotFoundException {
+        String json = "{\n"
+            + "  \"@type\" : [ \"https://some.host.domain/TestPojo\" ],\n"
+            + "  \"name\" : \"the name\",\n"
+            + "  \"answer\" : 42\n"
+            + "}";
+
+        ObjectMapper mapper = JacksonObjectMapper.buildMapperWithoutTimezone();
+        ObjectNode objectNode = mapper.readValue(json, ObjectNode.class);
+        assertTrue(objectNode.has("@type"));
+        JsonNode typeNode = objectNode.get("@type");
+        assertTrue(typeNode instanceof ArrayNode);
+        ArrayNode arrayNode = (ArrayNode) typeNode;
+        assertEquals(1, arrayNode.size());
+        String typeValue = arrayNode.get(0).textValue();
+        String clazzName = typeValue.substring(typeValue.lastIndexOf('/')+1);
+
+        String packageName = this.getClass().getPackage().getName();
+        packageName = JacksonObjectMapperTest.class.getPackage().getName();
+        packageName = TestPojo.class.getPackage().getName();
+        Class clazz = Class.forName(packageName + "." + clazzName);
+        Object obj = mapper.readValue(json, clazz);
+        assertTrue(obj instanceof TestPojo);
+        TestPojo pojo = (TestPojo) obj;
+        assertEquals("the name", pojo.getName());
+        assertEquals(42, pojo.getAnswer());
     }
 
 }
