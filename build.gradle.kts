@@ -35,10 +35,10 @@ repositories {
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-annotations:2.14.2")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.14.2")
     // Java 8 date/time type java.time.OffsetDateTime not supported by default,
     // so we need to add com.fasterxml.jackson.datatype:jackson-datatype-jsr310
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2")
 
     // Use JUnit Jupiter for testing.
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
