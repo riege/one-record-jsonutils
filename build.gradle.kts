@@ -46,7 +46,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2")
 
     // Use JUnit Jupiter for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.14.4")
 }
 
 tasks.named<Test>("test") {
