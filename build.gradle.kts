@@ -38,12 +38,12 @@ dependencies {
     // The API needs databind because JacksonObjectMapper.java
     // exposes a com.fasterxml.jackson.databind.ObjectMapper
     // on its public APi.
-    api("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    api("com.fasterxml.jackson.core:jackson-databind:2.22.2")
 
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.14.2")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.22")
     // Java 8 date/time type java.time.OffsetDateTime not supported by default,
     // so we need to add com.fasterxml.jackson.datatype:jackson-datatype-jsr310
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.22.2")
 
     // Use JUnit Jupiter for testing.
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
