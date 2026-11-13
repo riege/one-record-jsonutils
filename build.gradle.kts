@@ -13,20 +13,35 @@ group = "com.riege"
  * Gets the version name from the latest Git tag, omit leading "v" - yeah!
  * Note: a plugin way to do this would be via https://plugins.gradle.org/plugin/net.nemerosa.versioning
  */
-val gitVersion: String = ByteArrayOutputStream().use { outputStream ->
-    project.exec {
+fun getVersionName(): String {
+    val output = providers.exec {
         commandLine("git", "describe", "--tags", "--always")
-        standardOutput = outputStream
+        isIgnoreExitValue = true
     }
-    outputStream.toString().trim().replace("\"", "")
-}
-if (version == "unspecified") {
-    version = gitVersion
+    val tag = output.standardOutput.asText.get().trim()
+    return tag.removePrefix("v")
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_1_8
-java.targetCompatibility = JavaVersion.VERSION_1_8
-java.withSourcesJar()
+/*
+ * Gets the commit hash from the latest Git
+ * Note: a plugin way to do this would be via https://plugins.gradle.org/plugin/net.nemerosa.versioning
+ */
+fun getGitCommitHash(): String {
+    val output = providers.exec {
+        commandLine("git", "log", "-1", "--format=%H")
+        isIgnoreExitValue = true
+    }
+    return output.standardOutput.asText.get().trim().replace("\"", "")
+}
+
+val configuredVersion = project.version.toString()
+project.version = if (configuredVersion != "unspecified") configuredVersion else getVersionName()
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+    withSourcesJar()
+}
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -38,15 +53,16 @@ dependencies {
     // The API needs databind because JacksonObjectMapper.java
     // exposes a com.fasterxml.jackson.databind.ObjectMapper
     // on its public APi.
-    api("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    api("com.fasterxml.jackson.core:jackson-databind:2.23.0")
 
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.14.2")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.23")
     // Java 8 date/time type java.time.OffsetDateTime not supported by default,
     // so we need to add com.fasterxml.jackson.datatype:jackson-datatype-jsr310
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.23")
 
     // Use JUnit Jupiter for testing.
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.named<Test>("test") {
@@ -70,7 +86,7 @@ publishing {
     repositories {
         maven {
             name = "remote"
-            url = uri(System.getenv("MAVEN_PUBLISH_URL") ?: "")
+            url = uri(System.getenv("MAVEN_PUBLISH_URL") ?: " ")
             credentials {
                 username = System.getenv("MAVEN_PUBLISH_USERNAME")
                 password = System.getenv("MAVEN_PUBLISH_PASSWORD")
