@@ -15,13 +15,13 @@ jobs:
 
     steps:
       - name: Checkout latest code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Set up JDK with Dependency Caching
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
-          java-version: 8
+          java-version: 25
           cache: 'gradle'
 
       - name: Get tag version
@@ -32,7 +32,7 @@ jobs:
         run: ./gradlew -Pversion=${{ steps.get_version.outputs.version-without-v }} jar sourcesJar
 
       - name: Release without Changelog
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: ONE.Record Ontology-Model Library ${{ steps.get_version.outputs.version-without-v }}
           files: |

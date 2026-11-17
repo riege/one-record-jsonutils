@@ -6,6 +6,7 @@ package com.riege.onerecord.jsonutils;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,7 +33,7 @@ class JacksonObjectMapperTest {
         test.types.add("someType");
         test.answer = 42;
         test.name = "some text";
-        test.date = new GregorianCalendar(2023, 4 -1, 1, 13, 37).getTime();
+        test.date = new GregorianCalendar(2023, Calendar.APRIL, 1, 13, 37).getTime();
         test.offsetDateTime = OffsetDateTime.of(2023, 12, 24,
             0, 42, 0, 0,
             ZoneOffset.ofHours(2));
@@ -81,18 +83,16 @@ class JacksonObjectMapperTest {
         ObjectNode objectNode = mapper.readValue(json, ObjectNode.class);
         assertTrue(objectNode.has("@type"));
         JsonNode typeNode = objectNode.get("@type");
-        assertTrue(typeNode instanceof ArrayNode);
+        assertInstanceOf(ArrayNode.class, typeNode);
         ArrayNode arrayNode = (ArrayNode) typeNode;
         assertEquals(1, arrayNode.size());
         String typeValue = arrayNode.get(0).textValue();
         String clazzName = typeValue.substring(typeValue.lastIndexOf('/')+1);
 
-        String packageName = this.getClass().getPackage().getName();
-        packageName = JacksonObjectMapperTest.class.getPackage().getName();
-        packageName = TestPojo.class.getPackage().getName();
-        Class clazz = Class.forName(packageName + "." + clazzName);
+        String packageName = TestPojo.class.getPackage().getName();
+        Class<?> clazz = Class.forName(packageName + "." + clazzName);
         Object obj = mapper.readValue(json, clazz);
-        assertTrue(obj instanceof TestPojo);
+        assertInstanceOf(TestPojo.class, obj);
         TestPojo pojo = (TestPojo) obj;
         assertEquals("the name", pojo.getName());
         assertEquals(42, pojo.getAnswer());
