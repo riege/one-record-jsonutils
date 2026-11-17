@@ -86,7 +86,10 @@ publishing {
     repositories {
         maven {
             name = "remote"
-            url = uri(System.getenv("MAVEN_PUBLISH_URL") ?: " ")
+            val mavenPublishUrl = System.getenv("MAVEN_PUBLISH_URL")
+            if (mavenPublishUrl != null) {
+                url = uri(mavenPublishUrl)    
+            }
             credentials {
                 username = System.getenv("MAVEN_PUBLISH_USERNAME")
                 password = System.getenv("MAVEN_PUBLISH_PASSWORD")
