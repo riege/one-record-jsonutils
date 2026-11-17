@@ -4,7 +4,7 @@ plugins {
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
     id("maven-publish")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "9.6.1"
 }
 
 group = "com.riege"
@@ -58,10 +58,10 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-annotations:2.23")
     // Java 8 date/time type java.time.OffsetDateTime not supported by default,
     // so we need to add com.fasterxml.jackson.datatype:jackson-datatype-jsr310
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.23")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.23.0")
 
     // Use JUnit Jupiter for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -86,7 +86,10 @@ publishing {
     repositories {
         maven {
             name = "remote"
-            url = uri(System.getenv("MAVEN_PUBLISH_URL") ?: " ")
+            val mavenPublishUrl = System.getenv("MAVEN_PUBLISH_URL")
+            if (mavenPublishUrl != null) {
+                url = uri(mavenPublishUrl)    
+            }
             credentials {
                 username = System.getenv("MAVEN_PUBLISH_USERNAME")
                 password = System.getenv("MAVEN_PUBLISH_PASSWORD")
